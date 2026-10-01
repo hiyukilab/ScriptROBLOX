@@ -1583,37 +1583,38 @@ function Speed_Library:CreateWindow(Config)
 					BackgroundColor3 = Custom.ColorRGB,
 					BorderColor3 = Color3.fromRGB(0, 0, 0),
 					BorderSizePixel = 0,
-					Position = UDim2.new(1, -155, 0.5, 0),
-					Size = UDim2.new(0, 28, 0, 20),
+					Position = UDim2.new(1, -165, 0.5, 0),
+					Size = UDim2.new(0, 36, 0, 22),
 					Name = "SliderInput",
 				}, Slider)
 
         Custom:Create("UICorner", {
-          CornerRadius = UDim.new(0, 2),
+          CornerRadius = UDim.new(0, 4),
         }, SliderInput)
 
-         
 				local TextBox = Custom:Create("TextBox", {
 					Font = Enum.Font.GothamBold,
-					Text = "90",
+					Text = tostring(Default),
 					TextColor3 = Color3.fromRGB(255, 255, 255),
-					TextSize = 13,
-					TextWrapped = true,
+					TextSize = 12,
+					TextWrapped = false,
 					BackgroundColor3 = Color3.fromRGB(0, 0, 0),
-					BackgroundTransparency = 0.9990000128746033,
+					BackgroundTransparency = 0.999,
 					BorderColor3 = Color3.fromRGB(0, 0, 0),
 					BorderSizePixel = 0,
-					Position = UDim2.new(0, -1, 0, 0),
+					Position = UDim2.new(0, 0, 0, 0),
 					Size = UDim2.new(1, 0, 1, 0),
+					ClearTextOnFocus = false,
 				}, SliderInput)
+
         local SliderFrame = Custom:Create("Frame", {
 					AnchorPoint = Vector2.new(1, 0.5),
 					BackgroundColor3 = Color3.fromRGB(255, 255, 255),
 					BackgroundTransparency = 0.8,
 					BorderColor3 = Color3.fromRGB(0, 0, 0),
 					BorderSizePixel = 0,
-					Position = UDim2.new(1, -20, 0.5, 0),
-					Size = UDim2.new(0, 100, 0, 6),
+					Position = UDim2.new(1, -15, 0.5, 0),
+					Size = UDim2.new(0, 105, 0, 6),
 					Name = "SliderFrame",
 				}, Slider)
 
@@ -1648,15 +1649,17 @@ function Speed_Library:CreateWindow(Config)
           Thickness = 2,
         }, SliderCircle)
 
-        -- Hitbox vo hinh rong hon de bam va keo cuc ky nhay
+        -- Hitbox vô hình rộng 32px chiều cao giúp bấm và trượt trên điện thoại / PC cực nhạy
         local SliderHitbox = Custom:Create("TextButton", {
 					AnchorPoint = Vector2.new(1, 0.5),
 					BackgroundColor3 = Color3.fromRGB(0, 0, 0),
 					BackgroundTransparency = 1,
 					BorderSizePixel = 0,
-					Position = UDim2.new(1, -10, 0.5, 0),
-					Size = UDim2.new(0, 120, 1, 0),
+					Position = UDim2.new(1, -5, 0.5, 0),
+					Size = UDim2.new(0, 125, 0, 32),
 					Text = "",
+					Active = true,
+					ZIndex = 10,
 					Name = "SliderHitbox",
 				}, Slider)
 
@@ -1674,7 +1677,7 @@ function Speed_Library:CreateWindow(Config)
           TextBox.Text = tostring(Value)
           
           local Alpha = (Max == Min) and 0 or math.clamp((Value - Min) / (Max - Min), 0, 1)
-          TweenService:Create(SliderDraggable, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(Alpha, 0, 1, 0) }):Play()
+          TweenService:Create(SliderDraggable, TweenInfo.new(0.06, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(Alpha, 0, 1, 0) }):Play()
 
           if TriggerCallback ~= false then
             Callback(Funcs_Slider.Value)
@@ -1691,10 +1694,23 @@ function Speed_Library:CreateWindow(Config)
           Funcs_Slider:Set(NewVal, true)
         end
         
+        local function StartDrag(Input)
+          Dragging = true
+          if ScrolLayers then
+            ScrolLayers.ScrollingEnabled = false
+          end
+          UpdateFromInput(Input)
+        end
+
         SliderHitbox.InputBegan:Connect(function(Input)
           if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
-            Dragging = true
-            UpdateFromInput(Input)
+            StartDrag(Input)
+          end
+        end)
+
+        SliderFrame.InputBegan:Connect(function(Input)
+          if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
+            StartDrag(Input)
           end
         end)
       
@@ -1702,6 +1718,9 @@ function Speed_Library:CreateWindow(Config)
           if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
             if Dragging then
               Dragging = false
+              if ScrolLayers then
+                ScrolLayers.ScrollingEnabled = true
+              end
               Callback(Funcs_Slider.Value)
             end
           end
@@ -1716,20 +1735,18 @@ function Speed_Library:CreateWindow(Config)
         end)
         
         TextBox:GetPropertyChangedSignal("Text"):Connect(function()
-          local Valid = TextBox.Text:gsub("[^%d]", "")
-          if Valid ~= "" then
-            local ValidNumber = math.min(tonumber(Valid) or 0, Max)
-            TextBox.Text = tostring(ValidNumber)
-          else
-            TextBox.Text = "0"
+          local Cleaned = TextBox.Text:gsub("[^%d]", "")
+          if TextBox.Text ~= Cleaned then
+            TextBox.Text = Cleaned
           end
         end)
         
         TextBox.FocusLost:Connect(function()
-          if TextBox.Text ~= "" then
-            Funcs_Slider:Set(tonumber(TextBox.Text) or Default, true)
+          local val = tonumber(TextBox.Text)
+          if val then
+            Funcs_Slider:Set(val, true)
           else
-            Funcs_Slider:Set(Default, true)
+            TextBox.Text = tostring(Funcs_Slider.Value)
           end
         end)
         
