@@ -1597,19 +1597,18 @@ function Speed_Library:CreateWindow(Config)
 					Position = UDim2.new(0, -1, 0, 0),
 					Size = UDim2.new(1, 0, 1, 0),
 				}, SliderInput)
-
         local SliderFrame = Custom:Create("Frame", {
 					AnchorPoint = Vector2.new(1, 0.5),
 					BackgroundColor3 = Color3.fromRGB(255, 255, 255),
-					BackgroundTransparency = 0.800000011920929,
+					BackgroundTransparency = 0.8,
 					BorderColor3 = Color3.fromRGB(0, 0, 0),
 					BorderSizePixel = 0,
 					Position = UDim2.new(1, -20, 0.5, 0),
-					Size = UDim2.new(0, 100, 0, 3),
+					Size = UDim2.new(0, 100, 0, 6),
 					Name = "SliderFrame",
 				}, Slider)
 
-        Custom:Create("UICorner", {}, SliderFrame)
+        Custom:Create("UICorner", { CornerRadius = UDim.new(1, 0) }, SliderFrame)
 
         local SliderDraggable = Custom:Create("Frame", {
 					AnchorPoint = Vector2.new(0, 0.5),
@@ -1617,68 +1616,92 @@ function Speed_Library:CreateWindow(Config)
 					BorderColor3 = Color3.fromRGB(0, 0, 0),
 					BorderSizePixel = 0,
 					Position = UDim2.new(0, 0, 0.5, 0),
-					Size = UDim2.new(0.899999976, 0, 0, 1),
+					Size = UDim2.new(0, 0, 1, 0),
 					Name = "SliderDraggable",
 				}, SliderFrame)
 
-        Custom:Create("UICorner", {}, SliderDraggable)
+        Custom:Create("UICorner", { CornerRadius = UDim.new(1, 0) }, SliderDraggable)
 
         local SliderCircle = Custom:Create("Frame", {
-					AnchorPoint = Vector2.new(1, 0.5),
-					BackgroundColor3 = Custom.ColorRGB,
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					BackgroundColor3 = Color3.fromRGB(255, 255, 255),
 					BorderColor3 = Color3.fromRGB(0, 0, 0),
 					BorderSizePixel = 0,
-					Position = UDim2.new(1, 4, 0.5, 0),
-					Size = UDim2.new(0, 8, 0, 8),
+					Position = UDim2.new(1, 0, 0.5, 0),
+					Size = UDim2.new(0, 14, 0, 14),
 					Name = "SliderCircle",
 				}, SliderDraggable)
 
-        Custom:Create("UICorner", {}, SliderCircle)
+        Custom:Create("UICorner", { CornerRadius = UDim.new(1, 0) }, SliderCircle)
 
         Custom:Create("UIStroke", {
           Color = Custom.ColorRGB,
+          Thickness = 2,
         }, SliderCircle)
+
+        -- Hitbox vo hinh rong hon de bam va keo cuc ky nhay
+        local SliderHitbox = Custom:Create("TextButton", {
+					AnchorPoint = Vector2.new(1, 0.5),
+					BackgroundColor3 = Color3.fromRGB(0, 0, 0),
+					BackgroundTransparency = 1,
+					BorderSizePixel = 0,
+					Position = UDim2.new(1, -10, 0.5, 0),
+					Size = UDim2.new(0, 120, 1, 0),
+					Text = "",
+					Name = "SliderHitbox",
+				}, Slider)
 
         local Dragging = false
 
         local function Round(Number, Factor)
+          if Factor == 0 then return Number end
           local Result = math.floor(Number / Factor + (math.sign(Number) * 0.5)) * Factor
-          if Result < 0 then 
-            Result = Result + Factor 
-          end
           return Result
         end
         
-        function Funcs_Slider:Set(Value)
+        function Funcs_Slider:Set(Value, TriggerCallback)
           Value = math.clamp(Round(Value, Increment), Min, Max)
           Funcs_Slider.Value = Value
           TextBox.Text = tostring(Value)
-            
-          TweenService:Create(SliderDraggable, TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.fromScale((Value - Min) / (Max - Min), 1) }):Play()
-        end
-        
-        SliderFrame.InputBegan:Connect(function(Input)
-          if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
-            Dragging = true
-          end
-        end)
-      
-        SliderFrame.InputEnded:Connect(function(Input)
-          if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
-            Dragging = false
+          
+          local Alpha = (Max == Min) and 0 or math.clamp((Value - Min) / (Max - Min), 0, 1)
+          TweenService:Create(SliderDraggable, TweenInfo.new(0.08, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), { Size = UDim2.new(Alpha, 0, 1, 0) }):Play()
+
+          if TriggerCallback ~= false then
             Callback(Funcs_Slider.Value)
           end
+        end
+
+        local function UpdateFromInput(input)
+          local CurrPosX = input.Position.X
+          local AbsX = SliderFrame.AbsolutePosition.X
+          local AbsSize = SliderFrame.AbsoluteSize.X
+          if AbsSize <= 0 then return end
+          local SizeScale = math.clamp((CurrPosX - AbsX) / AbsSize, 0, 1)
+          local NewVal = Min + ((Max - Min) * SizeScale)
+          Funcs_Slider:Set(NewVal, true)
+        end
+        
+        SliderHitbox.InputBegan:Connect(function(Input)
+          if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
+            Dragging = true
+            UpdateFromInput(Input)
+          end
         end)
       
-        local _LastX = nil
+        UserInputService.InputEnded:Connect(function(Input)
+          if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
+            if Dragging then
+              Dragging = false
+              Callback(Funcs_Slider.Value)
+            end
+          end
+        end)
+      
         UserInputService.InputChanged:Connect(function(Input)
           if Dragging then
-            local CurrPosX = Input.Position.X
-            if CurrPosX ~= _LastX then
-              _LastX = CurrPosX
-      
-              local SizeScale = math.clamp((CurrPosX - SliderFrame.AbsolutePosition.X) / SliderFrame.AbsoluteSize.X, 0, 1)
-              Funcs_Slider:Set(Min + ((Max - Min) * SizeScale))
+            if Input.UserInputType == Enum.UserInputType.MouseMovement or Input.UserInputType == Enum.UserInputType.Touch then
+              UpdateFromInput(Input)
             end
           end
         end)
@@ -1686,7 +1709,7 @@ function Speed_Library:CreateWindow(Config)
         TextBox:GetPropertyChangedSignal("Text"):Connect(function()
           local Valid = TextBox.Text:gsub("[^%d]", "")
           if Valid ~= "" then
-            local ValidNumber = math.min(tonumber(Valid), Max)
+            local ValidNumber = math.min(tonumber(Valid) or 0, Max)
             TextBox.Text = tostring(ValidNumber)
           else
             TextBox.Text = "0"
@@ -1695,16 +1718,13 @@ function Speed_Library:CreateWindow(Config)
         
         TextBox.FocusLost:Connect(function()
           if TextBox.Text ~= "" then
-            Funcs_Slider:Set(tonumber(TextBox.Text))
-            Callback(Funcs_Slider.Value)
+            Funcs_Slider:Set(tonumber(TextBox.Text) or Default, true)
           else
-            Funcs_Slider:Set(0)
-            Callback(Funcs_Slider.Value)
+            Funcs_Slider:Set(Default, true)
           end
         end)
         
-        Funcs_Slider:Set(tonumber(Default))
-        Callback(Funcs_Slider.Value)
+        Funcs_Slider:Set(tonumber(Default), true)
 
         ItemCount += 1
 				return Funcs_Slider
