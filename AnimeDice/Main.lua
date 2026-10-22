@@ -1,12 +1,29 @@
-local TARGET_PLACE_ID = 113290951185459
-local playersService = game:GetService("Players")
-local localPlayer = playersService.LocalPlayer or playersService.PlayerAdded:Wait()
+if not game:IsLoaded() then
+	pcall(function() game.Loaded:Wait() end)
+end
 
-if game.PlaceId ~= TARGET_PLACE_ID and game.GameId ~= TARGET_PLACE_ID then
-	local msg = "Game khong duoc ho tro! Script chi hoat dong tai Anime DICE (ID: " .. tostring(TARGET_PLACE_ID) .. ")"
+local playersService = game:GetService("Players")
+local localPlayer = playersService.LocalPlayer
+while not localPlayer do
+	task.wait(0.2)
+	localPlayer = playersService.LocalPlayer
+end
+
+local TARGET_PLACE_ID = "113290951185459"
+local TARGET_UNIVERSE_ID = "10708913337"
+
+local currentPlaceId = tostring(game.PlaceId)
+local currentGameId = tostring(game.GameId)
+
+local isAllowed = (currentPlaceId == TARGET_PLACE_ID)
+	or (currentGameId == TARGET_UNIVERSE_ID)
+	or (currentGameId == TARGET_PLACE_ID)
+
+if not isAllowed then
+	local msg = "Game is not supported! Script only runs on Anime DICE (Place: 113290951185459, Game: 10708913337). Current: Place=" .. currentPlaceId .. ", Game=" .. currentGameId
 	warn("[Byte] " .. msg)
 	if localPlayer then
-		localPlayer:Kick(msg)
+		pcall(function() localPlayer:Kick(msg) end)
 	end
 	return
 end
@@ -40,7 +57,12 @@ upgradeService:start()
 playerService:start()
 
 local function initUI(speedLibrary)
-	Menu.init(speedLibrary, Config, playerService)
+	local ok, err = xpcall(function()
+		Menu.init(speedLibrary, Config, playerService)
+	end, function(e)
+		warn("[Byte Error] Menu init failed: " .. tostring(e))
+		warn(debug.traceback())
+	end)
 end
 
 return {

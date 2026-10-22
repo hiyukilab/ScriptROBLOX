@@ -2,8 +2,6 @@ local playersService = game:GetService("Players")
 local replicatedStorage = game:GetService("ReplicatedStorage")
 local runService = game:GetService("RunService")
 
-local localPlayer = playersService.LocalPlayer
-
 local Combat = {}
 Combat.__index = Combat
 
@@ -24,13 +22,17 @@ function Combat:findRemote(names)
 	return nil
 end
 
+function Combat:getPlayer()
+	return playersService.LocalPlayer
+end
+
 function Combat:getClosestTarget()
-	local char = localPlayer.Character
+	local player = self:getPlayer()
+	local char = player and player.Character
 	if not char or not char:FindFirstChild("HumanoidRootPart") then return nil end
 	local myPos = char.HumanoidRootPart.Position
 
 	local closest, minDist = nil, math.huge
-	local candidates = {}
 	
 	local mobsFolder = workspace:FindFirstChild("Mobs") or workspace:FindFirstChild("Enemies") or workspace:FindFirstChild("Monsters") or workspace
 	for _, obj in ipairs(mobsFolder:GetChildren()) do
@@ -70,7 +72,8 @@ function Combat:start()
 			if self.config.AutoFarm then
 				local target = self:getClosestTarget()
 				if target then
-					local char = localPlayer.Character
+					local player = self:getPlayer()
+					local char = player and player.Character
 					local targetRoot = target:FindFirstChild("HumanoidRootPart") or target:FindFirstChild("Head")
 					if char and char:FindFirstChild("HumanoidRootPart") and targetRoot then
 						char.HumanoidRootPart.CFrame = targetRoot.CFrame * CFrame.new(0, 0, self.config.FarmDistance or 5)

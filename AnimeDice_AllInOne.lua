@@ -5,15 +5,32 @@
     ====================================================================
 --]]
 
-local TARGET_PLACE_ID = 113290951185459
-local playersService = game:GetService("Players")
-local localPlayer = playersService.LocalPlayer or playersService.PlayerAdded:Wait()
+if not game:IsLoaded() then
+	pcall(function() game.Loaded:Wait() end)
+end
 
-if game.PlaceId ~= TARGET_PLACE_ID and game.GameId ~= TARGET_PLACE_ID then
-	local msg = "Game is not supported! Script only runs on Anime DICE (ID: " .. tostring(TARGET_PLACE_ID) .. ")"
+local playersService = game:GetService("Players")
+local localPlayer = playersService.LocalPlayer
+while not localPlayer do
+	task.wait(0.2)
+	localPlayer = playersService.LocalPlayer
+end
+
+local TARGET_PLACE_ID = "113290951185459"
+local TARGET_UNIVERSE_ID = "10708913337"
+
+local currentPlaceId = tostring(game.PlaceId)
+local currentGameId = tostring(game.GameId)
+
+local isAllowed = (currentPlaceId == TARGET_PLACE_ID)
+	or (currentGameId == TARGET_UNIVERSE_ID)
+	or (currentGameId == TARGET_PLACE_ID)
+
+if not isAllowed then
+	local msg = "Game is not supported! Script only runs on Anime DICE (Place: 113290951185459, Game: 10708913337). Current: Place=" .. currentPlaceId .. ", Game=" .. currentGameId
 	warn("[Byte] " .. msg)
 	if localPlayer then
-		localPlayer:Kick(msg)
+		pcall(function() localPlayer:Kick(msg) end)
 	end
 	return
 end
@@ -2300,8 +2317,6 @@ local Roll = (function()
 local replicatedStorage = game:GetService("ReplicatedStorage")
 local playersService = game:GetService("Players")
 
-local localPlayer = playersService.LocalPlayer
-
 local Roll = {}
 Roll.__index = Roll
 
@@ -2384,8 +2399,6 @@ local playersService = game:GetService("Players")
 local replicatedStorage = game:GetService("ReplicatedStorage")
 local runService = game:GetService("RunService")
 
-local localPlayer = playersService.LocalPlayer
-
 local Combat = {}
 Combat.__index = Combat
 
@@ -2406,13 +2419,17 @@ function Combat:findRemote(names)
 	return nil
 end
 
+function Combat:getPlayer()
+	return playersService.LocalPlayer
+end
+
 function Combat:getClosestTarget()
-	local char = localPlayer.Character
+	local player = self:getPlayer()
+	local char = player and player.Character
 	if not char or not char:FindFirstChild("HumanoidRootPart") then return nil end
 	local myPos = char.HumanoidRootPart.Position
 
 	local closest, minDist = nil, math.huge
-	local candidates = {}
 	
 	local mobsFolder = workspace:FindFirstChild("Mobs") or workspace:FindFirstChild("Enemies") or workspace:FindFirstChild("Monsters") or workspace
 	for _, obj in ipairs(mobsFolder:GetChildren()) do
@@ -2452,7 +2469,8 @@ function Combat:start()
 			if self.config.AutoFarm then
 				local target = self:getClosestTarget()
 				if target then
-					local char = localPlayer.Character
+					local player = self:getPlayer()
+					local char = player and player.Character
 					local targetRoot = target:FindFirstChild("HumanoidRootPart") or target:FindFirstChild("Head")
 					if char and char:FindFirstChild("HumanoidRootPart") and targetRoot then
 						char.HumanoidRootPart.CFrame = targetRoot.CFrame * CFrame.new(0, 0, self.config.FarmDistance or 5)
@@ -2540,8 +2558,6 @@ local playersService = game:GetService("Players")
 local userInputService = game:GetService("UserInputService")
 local runService = game:GetService("RunService")
 
-local localPlayer = playersService.LocalPlayer
-
 local PlayerFeature = {}
 PlayerFeature.__index = PlayerFeature
 
@@ -2552,8 +2568,13 @@ function PlayerFeature.new(config)
 	return self
 end
 
+function PlayerFeature:getPlayer()
+	return playersService.LocalPlayer
+end
+
 function PlayerFeature:applyStats()
-	local char = localPlayer.Character
+	local player = self:getPlayer()
+	local char = player and player.Character
 	if char and char:FindFirstChildOfClass("Humanoid") then
 		char.Humanoid.WalkSpeed = self.config.WalkSpeed or 16
 		char.Humanoid.UseJumpPower = true
@@ -2564,7 +2585,8 @@ end
 function PlayerFeature:start()
 	local jumpConn = userInputService.JumpRequest:Connect(function()
 		if self.config.InfiniteJump then
-			local char = localPlayer.Character
+			local player = self:getPlayer()
+			local char = player and player.Character
 			if char and char:FindFirstChildOfClass("Humanoid") then
 				char.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping)
 			end
@@ -2574,7 +2596,8 @@ function PlayerFeature:start()
 
 	local noclipConn = runService.Stepped:Connect(function()
 		if self.config.Noclip then
-			local char = localPlayer.Character
+			local player = self:getPlayer()
+			local char = player and player.Character
 			if char then
 				for _, part in ipairs(char:GetDescendants()) do
 					if part:IsA("BasePart") and part.CanCollide then
@@ -2586,11 +2609,18 @@ function PlayerFeature:start()
 	end)
 	table.insert(self.connections, noclipConn)
 
-	local charAddedConn = localPlayer.CharacterAdded:Connect(function()
-		task.wait(0.5)
-		self:applyStats()
+	task.spawn(function()
+		local player = self:getPlayer()
+		while not player do
+			task.wait(0.2)
+			player = self:getPlayer()
+		end
+		local charAddedConn = player.CharacterAdded:Connect(function()
+			task.wait(0.5)
+			self:applyStats()
+		end)
+		table.insert(self.connections, charAddedConn)
 	end)
-	table.insert(self.connections, charAddedConn)
 end
 
 function PlayerFeature:stop()
@@ -2841,9 +2871,18 @@ local combatService = Combat.new(Config)
 local upgradeService = Upgrades.new(Config)
 local playerService = PlayerFeature.new(Config)
 
-rollService:start()
-combatService:start()
-upgradeService:start()
-playerService:start()
+pcall(function() rollService:start() end)
+pcall(function() combatService:start() end)
+pcall(function() upgradeService:start() end)
+pcall(function() playerService:start() end)
 
-Menu.init(Speed_Library, Config, playerService)
+local ok, err = xpcall(function()
+	Menu.init(Speed_Library, Config, playerService)
+end, function(e)
+	warn("[Byte Hub] Menu.init Error: " .. tostring(e))
+	warn(debug.traceback())
+end)
+
+if not ok then
+	warn("[Byte Hub] Failed to launch Menu: " .. tostring(err))
+end

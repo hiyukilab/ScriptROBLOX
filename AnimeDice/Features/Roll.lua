@@ -1,8 +1,6 @@
 local replicatedStorage = game:GetService("ReplicatedStorage")
 local playersService = game:GetService("Players")
 
-local localPlayer = playersService.LocalPlayer
-
 local Roll = {}
 Roll.__index = Roll
 
