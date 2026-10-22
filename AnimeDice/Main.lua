@@ -20,7 +20,7 @@ local isAllowed = (currentPlaceId == TARGET_PLACE_ID)
 	or (currentGameId == TARGET_PLACE_ID)
 
 if not isAllowed then
-	local msg = "Game is not supported! Script only runs on Anime DICE (Place: 113290951185459, Game: 10708913337). Current: Place=" .. currentPlaceId .. ", Game=" .. currentGameId
+	local msg = "Game is not supported! Script only runs on Anime DICE (Place: 113290951185459). Current: Place=" .. currentPlaceId .. ", Game=" .. currentGameId
 	warn("[Byte] " .. msg)
 	if localPlayer then
 		pcall(function() localPlayer:Kick(msg) end)
@@ -44,6 +44,7 @@ local Roll = loadModule("AnimeDice/Features/Roll.lua")
 local Combat = loadModule("AnimeDice/Features/Combat.lua")
 local Upgrades = loadModule("AnimeDice/Features/Upgrades.lua")
 local PlayerFeature = loadModule("AnimeDice/Features/Player.lua")
+local ByteUi = loadModule("AnimeDice/UI/ByteUi.lua")
 local Menu = loadModule("AnimeDice/UI/Menu.lua")
 
 local rollService = Roll.new(Config)
@@ -51,21 +52,19 @@ local combatService = Combat.new(Config)
 local upgradeService = Upgrades.new(Config)
 local playerService = PlayerFeature.new(Config)
 
-rollService:start()
-combatService:start()
-upgradeService:start()
-playerService:start()
+pcall(function() rollService:start() end)
+pcall(function() combatService:start() end)
+pcall(function() upgradeService:start() end)
+pcall(function() playerService:start() end)
 
-local function initUI(speedLibrary)
-	local ok, err = xpcall(function()
-		Menu.init(speedLibrary, Config, playerService)
-	end, function(e)
-		warn("[Byte Error] Menu init failed: " .. tostring(e))
-		warn(debug.traceback())
-	end)
-end
+local ok, err = xpcall(function()
+	Menu.init(ByteUi, Config, playerService)
+end, function(e)
+	warn("[Byte Error] Menu init failed: " .. tostring(e))
+	warn(debug.traceback())
+end)
 
 return {
 	Config = Config,
-	InitUI = initUI
+	ByteUi = ByteUi
 }

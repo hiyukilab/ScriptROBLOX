@@ -1,28 +1,23 @@
 local Menu = {}
 
-function Menu.init(speedLibrary, config, playerFeature)
-	speedLibrary:SetNotification({
+function Menu.init(byteUiLibrary, config, playerFeature)
+	byteUiLibrary:Notify({
 		Title = "Byte - Anime DICE",
-		Description = "v1.0.0",
 		Content = "Anime DICE Hub loaded successfully!",
-		Time = 0.5,
 		Delay = 4
 	})
 
-	local Window = speedLibrary:CreateWindow({
+	local Window = byteUiLibrary.new({
 		Title = "ANIME DICE HUB",
-		Description = "Byte Edition",
-		["Tab Width"] = 140,
-		SizeUi = UDim2.fromOffset(580, 360)
+		SubTitle = "Byte Edition"
 	})
 
 	-- TAB 1: ROLL DICE
 	local TabDice = Window:CreateTab({
-		Name = "Roll Dice",
-		Icon = "rbxassetid://10723346959"
+		Name = "Roll Dice"
 	})
 
-	local SecRoll = TabDice:AddSection("Auto Roll Dice", true)
+	local SecRoll = TabDice:AddSection("Auto Roll Dice")
 
 	SecRoll:AddToggle({
 		Title = "Auto Roll",
@@ -35,11 +30,10 @@ function Menu.init(speedLibrary, config, playerFeature)
 
 	SecRoll:AddSlider({
 		Title = "Roll Delay",
-		Content = "Delay between each roll in seconds",
-		Increment = 0.05,
 		Min = 0.05,
 		Max = 1,
 		Default = config.RollDelay or 0.2,
+		Increment = 0.05,
 		Callback = function(val)
 			config.RollDelay = val
 		end
@@ -47,10 +41,8 @@ function Menu.init(speedLibrary, config, playerFeature)
 
 	SecRoll:AddDropdown({
 		Title = "Select Dice Type",
-		Content = "Priority dice type to roll",
-		Multi = false,
 		Options = {"Normal", "Golden", "Diamond", "Rainbow", "Mythic"},
-		Default = {"Normal"},
+		Default = "Normal",
 		Callback = function(selected)
 			config.SelectedDice = selected[1]
 		end
@@ -67,11 +59,10 @@ function Menu.init(speedLibrary, config, playerFeature)
 
 	-- TAB 2: AUTO FARM
 	local TabFarm = Window:CreateTab({
-		Name = "Auto Farm",
-		Icon = "rbxassetid://10734950309"
+		Name = "Auto Farm"
 	})
 
-	local SecFarm = TabFarm:AddSection("Farm Monsters & Bosses", true)
+	local SecFarm = TabFarm:AddSection("Farm Monsters & Bosses")
 
 	SecFarm:AddToggle({
 		Title = "Auto Attack Mobs",
@@ -84,10 +75,8 @@ function Menu.init(speedLibrary, config, playerFeature)
 
 	SecFarm:AddDropdown({
 		Title = "Select Target Mob",
-		Content = "Choose target mob to farm",
-		Multi = false,
 		Options = {"All", "Bandit", "Samurai", "Curse Spirit", "Demon", "Dragon Boss"},
-		Default = {"All"},
+		Default = "All",
 		Callback = function(selected)
 			config.SelectedMob = selected[1]
 		end
@@ -95,11 +84,10 @@ function Menu.init(speedLibrary, config, playerFeature)
 
 	SecFarm:AddSlider({
 		Title = "Attack Distance",
-		Content = "Distance between character and target",
-		Increment = 1,
 		Min = 3,
 		Max = 15,
 		Default = 7,
+		Increment = 1,
 		Callback = function(val)
 			config.FarmDistance = val
 		end
@@ -107,11 +95,10 @@ function Menu.init(speedLibrary, config, playerFeature)
 
 	-- TAB 3: UPGRADES
 	local TabUpgrades = Window:CreateTab({
-		Name = "Upgrades",
-		Icon = "rbxassetid://10747372992"
+		Name = "Upgrades"
 	})
 
-	local SecUpgrade = TabUpgrades:AddSection("Auto Upgrade Stats", true)
+	local SecUpgrade = TabUpgrades:AddSection("Auto Upgrade Stats")
 
 	SecUpgrade:AddToggle({
 		Title = "Auto Upgrade Luck",
@@ -142,19 +129,17 @@ function Menu.init(speedLibrary, config, playerFeature)
 
 	-- TAB 4: PLAYER
 	local TabPlayer = Window:CreateTab({
-		Name = "Player",
-		Icon = "rbxassetid://10723415766"
+		Name = "Player"
 	})
 
-	local SecPlayer = TabPlayer:AddSection("Movement & Abilities", true)
+	local SecPlayer = TabPlayer:AddSection("Movement & Abilities")
 
 	SecPlayer:AddSlider({
 		Title = "WalkSpeed",
-		Content = "Adjust character movement speed",
-		Increment = 1,
 		Min = 16,
 		Max = 250,
 		Default = 16,
+		Increment = 1,
 		Callback = function(val)
 			config.WalkSpeed = val
 			if playerFeature then playerFeature:applyStats() end
@@ -163,11 +148,10 @@ function Menu.init(speedLibrary, config, playerFeature)
 
 	SecPlayer:AddSlider({
 		Title = "JumpPower",
-		Content = "Adjust character jump height",
-		Increment = 5,
 		Min = 50,
 		Max = 350,
 		Default = 50,
+		Increment = 5,
 		Callback = function(val)
 			config.JumpPower = val
 			if playerFeature then playerFeature:applyStats() end
@@ -194,27 +178,23 @@ function Menu.init(speedLibrary, config, playerFeature)
 
 	-- TAB 5: SETTINGS
 	local TabMisc = Window:CreateTab({
-		Name = "Settings",
-		Icon = "rbxassetid://10734950020"
+		Name = "Settings"
 	})
 
-	local SecMisc = TabMisc:AddSection("Information & Community", true)
+	local SecMisc = TabMisc:AddSection("Information & Community")
 
 	SecMisc:AddParagraph({
 		Title = "Anime DICE Script",
-		Content = "Official Byte edition script running on Speed Hub X UI."
+		Content = "Official Byte edition script running on ByteUi."
 	})
 
 	SecMisc:AddButton({
 		Title = "Copy Byte Discord",
-		Content = "Join the official Byte community: discord.gg/xbyte",
-		Icon = "rbxassetid://10709798574",
 		Callback = function()
 			if setclipboard then
 				setclipboard("https://discord.gg/xbyte")
-				speedLibrary:SetNotification({
+				byteUiLibrary:Notify({
 					Title = "Clipboard",
-					Description = "Success",
 					Content = "Copied discord.gg/xbyte to clipboard!",
 					Delay = 3
 				})
