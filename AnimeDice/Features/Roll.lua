@@ -8,7 +8,23 @@ function Roll.new(config)
 	local self = setmetatable({}, Roll)
 	self.config = config
 	self.running = false
+	self.controller = nil
+	self:initController()
 	return self
+end
+
+function Roll:initController()
+	pcall(function()
+		local rollingFolder = replicatedStorage:FindFirstChild("Framework")
+			and replicatedStorage.Framework:FindFirstChild("Features")
+			and replicatedStorage.Framework.Features:FindFirstChild("Rolling")
+		
+		if rollingFolder and rollingFolder:FindFirstChild("RollController") then
+			if setthreadidentity then setthreadidentity(2) end
+			self.controller = require(rollingFolder.RollController)
+			if setthreadidentity then setthreadidentity(8) end
+		end
+	end)
 end
 
 function Roll:findRemote(possibleNames)
@@ -22,12 +38,29 @@ function Roll:findRemote(possibleNames)
 end
 
 function Roll:executeRoll()
+	if not self.controller then
+		self:initController()
+	end
+
+	-- Try calling RollController directly (from ReplicatedStorage.Framework.Features.Rolling.RollController)
+	if self.controller then
+		local rollFn = self.controller.roll or self.controller.Roll or self.controller.requestRoll
+		if typeof(rollFn) == "function" then
+			local ok = pcall(function() rollFn(self.controller, 1) end)
+			if not ok then
+				pcall(function() rollFn(1) end)
+			end
+			return
+		end
+	end
+
+	-- Fallback to Remote search
 	local rollRemote = self:findRemote({"RollDice", "Roll", "RollEvent", "DiceRoll", "RequestRoll"})
 	if rollRemote then
 		if rollRemote:IsA("RemoteEvent") then
-			rollRemote:FireServer(self.config.SelectedDice or 1)
+			rollRemote:FireServer(1)
 		elseif rollRemote:IsA("RemoteFunction") then
-			rollRemote:InvokeServer(self.config.SelectedDice or 1)
+			rollRemote:InvokeServer(1)
 		end
 	end
 end
