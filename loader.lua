@@ -25,6 +25,9 @@ local function getScript(url)
 			content = res
 		end
 	end
+	if content and content:sub(1, 3) == "\239\187\191" then
+		content = content:sub(4)
+	end
 	return content
 end
 

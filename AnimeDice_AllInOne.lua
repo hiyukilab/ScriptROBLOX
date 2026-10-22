@@ -1,4 +1,4 @@
-﻿--[[
+--[[
     ====================================================================
     BYTE HUB - ANIME DICE (ALL-IN-ONE STANDALONE)
     https://discord.gg/xbyte
@@ -27,8 +27,56 @@ local isAllowed = (currentPlaceId == TARGET_PLACE_ID)
 	or (currentGameId == TARGET_PLACE_ID)
 
 if not isAllowed then
-	local msg = "Game is not supported! Script only runs on Anime DICE (Place: 113290951185459, Game: 10708913337). Current: Place=" .. currentPlaceId .. ", Game=" .. currentGameId
+	local msg = "Game is not supported! Script only runs on Anime DICE (Place: 113290951185459). Current: Place=" .. currentPlaceId .. ", Game=" .. currentGameId
 	warn("[Byte] " .. msg)
+	pcall(function()
+		local screenGui = Instance.new("ScreenGui")
+		screenGui.Name = "ByteNotice"
+		screenGui.ResetOnSpawn = false
+		local parent = (gethui and gethui()) or (cloneref and cloneref(game:GetService("CoreGui"))) or game:GetService("CoreGui") or (localPlayer and localPlayer:FindFirstChild("PlayerGui"))
+		screenGui.Parent = parent
+
+		local frame = Instance.new("Frame")
+		frame.Size = UDim2.new(0, 420, 0, 110)
+		frame.Position = UDim2.new(0.5, -210, 0.25, 0)
+		frame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+		frame.BorderSizePixel = 0
+		frame.Parent = screenGui
+
+		local corner = Instance.new("UICorner")
+		corner.CornerRadius = UDim.new(0, 8)
+		corner.Parent = frame
+
+		local stroke = Instance.new("UIStroke")
+		stroke.Color = Color3.fromRGB(250, 40, 40)
+		stroke.Thickness = 1.6
+		stroke.Parent = frame
+
+		local title = Instance.new("TextLabel")
+		title.Text = "BYTE HUB - GAME NOT SUPPORTED"
+		title.Font = Enum.Font.GothamBold
+		title.TextSize = 14
+		title.TextColor3 = Color3.fromRGB(255, 60, 60)
+		title.Size = UDim2.new(1, -20, 0, 25)
+		title.Position = UDim2.new(0, 10, 0, 8)
+		title.BackgroundTransparency = 1
+		title.Parent = frame
+
+		local body = Instance.new("TextLabel")
+		body.Text = msg
+		body.Font = Enum.Font.Gotham
+		body.TextSize = 12
+		body.TextColor3 = Color3.fromRGB(230, 230, 230)
+		body.TextWrapped = true
+		body.Size = UDim2.new(1, -20, 0, 60)
+		body.Position = UDim2.new(0, 10, 0, 35)
+		body.BackgroundTransparency = 1
+		body.Parent = frame
+
+		task.delay(10, function()
+			pcall(function() screenGui:Destroy() end)
+		end)
+	end)
 	if localPlayer then
 		pcall(function() localPlayer:Kick(msg) end)
 	end

@@ -1,4 +1,4 @@
-﻿--[[
+--[[
     ====================================================================
     SPEED HUB X 5.0.0 - ALL-IN-ONE STANDALONE
     https://discord.gg/xbyte
