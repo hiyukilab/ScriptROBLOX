@@ -4,7 +4,7 @@ function Menu.init(speedLibrary, config, playerFeature)
 	speedLibrary:SetNotification({
 		Title = "Byte - Anime DICE",
 		Description = "v1.0.0",
-		Content = "Menu Anime DICE đã nạp thành công!",
+		Content = "Anime DICE Hub loaded successfully!",
 		Time = 0.5,
 		Delay = 4
 	})
@@ -18,15 +18,15 @@ function Menu.init(speedLibrary, config, playerFeature)
 
 	-- TAB 1: ROLL DICE
 	local TabDice = Window:CreateTab({
-		Name = "Xúc Xắc",
+		Name = "Roll Dice",
 		Icon = "rbxassetid://10723346959"
 	})
 
-	local SecRoll = TabDice:AddSection("Tự Động Lắc Xúc Xắc", true)
+	local SecRoll = TabDice:AddSection("Auto Roll Dice", true)
 
 	SecRoll:AddToggle({
-		Title = "Tự Động Lắc (Auto Roll)",
-		Content = "Tự động kích hoạt lắc xúc xắc liên tục",
+		Title = "Auto Roll",
+		Content = "Automatically roll dice continuously",
 		Default = false,
 		Callback = function(state)
 			config.AutoRoll = state
@@ -34,8 +34,8 @@ function Menu.init(speedLibrary, config, playerFeature)
 	})
 
 	SecRoll:AddSlider({
-		Title = "Tốc độ lắc (Delay)",
-		Content = "Khoảng cách thời gian giữa mỗi lần lắc (giây)",
+		Title = "Roll Delay",
+		Content = "Delay between each roll in seconds",
 		Increment = 0.05,
 		Min = 0.05,
 		Max = 1,
@@ -46,8 +46,8 @@ function Menu.init(speedLibrary, config, playerFeature)
 	})
 
 	SecRoll:AddDropdown({
-		Title = "Chọn Loại Xúc Xắc",
-		Content = "Loại xúc xắc ưu tiên roll",
+		Title = "Select Dice Type",
+		Content = "Priority dice type to roll",
 		Multi = false,
 		Options = {"Normal", "Golden", "Diamond", "Rainbow", "Mythic"},
 		Default = {"Normal"},
@@ -57,8 +57,8 @@ function Menu.init(speedLibrary, config, playerFeature)
 	})
 
 	SecRoll:AddToggle({
-		Title = "Tự Trang Bị Tốt Nhất (Equip Best)",
-		Content = "Tự động đeo xúc xắc có chỉ số cao nhất",
+		Title = "Auto Equip Best",
+		Content = "Automatically equip highest stat dice",
 		Default = false,
 		Callback = function(state)
 			config.AutoEquipBest = state
@@ -71,11 +71,11 @@ function Menu.init(speedLibrary, config, playerFeature)
 		Icon = "rbxassetid://10734950309"
 	})
 
-	local SecFarm = TabFarm:AddSection("Đánh Quái & Boss", true)
+	local SecFarm = TabFarm:AddSection("Farm Monsters & Bosses", true)
 
 	SecFarm:AddToggle({
-		Title = "Tự Động Đánh Quái (Auto Farm)",
-		Content = "Tự động bay đến quái và tấn công",
+		Title = "Auto Attack Mobs",
+		Content = "Automatically teleport and attack target",
 		Default = false,
 		Callback = function(state)
 			config.AutoFarm = state
@@ -83,8 +83,8 @@ function Menu.init(speedLibrary, config, playerFeature)
 	})
 
 	SecFarm:AddDropdown({
-		Title = "Chọn Quái Vật",
-		Content = "Chọn quái muốn farm",
+		Title = "Select Target Mob",
+		Content = "Choose target mob to farm",
 		Multi = false,
 		Options = {"All", "Bandit", "Samurai", "Curse Spirit", "Demon", "Dragon Boss"},
 		Default = {"All"},
@@ -94,8 +94,8 @@ function Menu.init(speedLibrary, config, playerFeature)
 	})
 
 	SecFarm:AddSlider({
-		Title = "Khoảng cách đứng",
-		Content = "Khoảng cách từ nhân vật tới quái",
+		Title = "Attack Distance",
+		Content = "Distance between character and target",
 		Increment = 1,
 		Min = 3,
 		Max = 15,
@@ -107,15 +107,15 @@ function Menu.init(speedLibrary, config, playerFeature)
 
 	-- TAB 3: UPGRADES
 	local TabUpgrades = Window:CreateTab({
-		Name = "Nâng Cấp",
+		Name = "Upgrades",
 		Icon = "rbxassetid://10747372992"
 	})
 
-	local SecUpgrade = TabUpgrades:AddSection("Tự Động Nâng Cấp", true)
+	local SecUpgrade = TabUpgrades:AddSection("Auto Upgrade Stats", true)
 
 	SecUpgrade:AddToggle({
 		Title = "Auto Upgrade Luck",
-		Content = "Tự động tăng chỉ số may mắn khi đủ tiền",
+		Content = "Automatically increase luck when affordable",
 		Default = false,
 		Callback = function(state)
 			config.AutoUpgradeLuck = state
@@ -124,7 +124,7 @@ function Menu.init(speedLibrary, config, playerFeature)
 
 	SecUpgrade:AddToggle({
 		Title = "Auto Upgrade Damage",
-		Content = "Tự động tăng sát thương xúc xắc",
+		Content = "Automatically increase dice damage",
 		Default = false,
 		Callback = function(state)
 			config.AutoUpgradeDamage = state
@@ -133,7 +133,7 @@ function Menu.init(speedLibrary, config, playerFeature)
 
 	SecUpgrade:AddToggle({
 		Title = "Auto Upgrade Coins",
-		Content = "Tự động nâng cấp hệ số nhân tiền",
+		Content = "Automatically upgrade coin multiplier",
 		Default = false,
 		Callback = function(state)
 			config.AutoUpgradeCoins = state
@@ -142,15 +142,15 @@ function Menu.init(speedLibrary, config, playerFeature)
 
 	-- TAB 4: PLAYER
 	local TabPlayer = Window:CreateTab({
-		Name = "Nhân Vật",
+		Name = "Player",
 		Icon = "rbxassetid://10723415766"
 	})
 
-	local SecPlayer = TabPlayer:AddSection("Di Chuyển & Khả Năng", true)
+	local SecPlayer = TabPlayer:AddSection("Movement & Abilities", true)
 
 	SecPlayer:AddSlider({
 		Title = "WalkSpeed",
-		Content = "Tốc độ chạy",
+		Content = "Adjust character movement speed",
 		Increment = 1,
 		Min = 16,
 		Max = 250,
@@ -163,7 +163,7 @@ function Menu.init(speedLibrary, config, playerFeature)
 
 	SecPlayer:AddSlider({
 		Title = "JumpPower",
-		Content = "Lực nhảy",
+		Content = "Adjust character jump height",
 		Increment = 5,
 		Min = 50,
 		Max = 350,
@@ -176,7 +176,7 @@ function Menu.init(speedLibrary, config, playerFeature)
 
 	SecPlayer:AddToggle({
 		Title = "Infinite Jump",
-		Content = "Nhảy vô hạn trên không",
+		Content = "Jump infinitely in mid-air",
 		Default = false,
 		Callback = function(state)
 			config.InfiniteJump = state
@@ -185,37 +185,37 @@ function Menu.init(speedLibrary, config, playerFeature)
 
 	SecPlayer:AddToggle({
 		Title = "Noclip",
-		Content = "Đi xuyên tường / vật thể",
+		Content = "Walk through walls and obstacles",
 		Default = false,
 		Callback = function(state)
 			config.Noclip = state
 		end
 	})
 
-	-- TAB 5: MISC
+	-- TAB 5: SETTINGS
 	local TabMisc = Window:CreateTab({
-		Name = "Cài Đặt",
+		Name = "Settings",
 		Icon = "rbxassetid://10734950020"
 	})
 
-	local SecMisc = TabMisc:AddSection("Thông Tin & Hỗ Trợ", true)
+	local SecMisc = TabMisc:AddSection("Information & Community", true)
 
 	SecMisc:AddParagraph({
 		Title = "Anime DICE Script",
-		Content = "Phiên bản thiết kế riêng cho Byte Executor trên nền tảng Speed Hub X UI."
+		Content = "Official Byte edition script running on Speed Hub X UI."
 	})
 
 	SecMisc:AddButton({
-		Title = "Sao chép Discord Byte",
-		Content = "Tham gia cộng đồng Byte: discord.gg/xbyte",
+		Title = "Copy Byte Discord",
+		Content = "Join the official Byte community: discord.gg/xbyte",
 		Icon = "rbxassetid://10709798574",
 		Callback = function()
 			if setclipboard then
 				setclipboard("https://discord.gg/xbyte")
 				speedLibrary:SetNotification({
 					Title = "Clipboard",
-					Description = "Thành công",
-					Content = "Đã copy link discord.gg/xbyte!",
+					Description = "Success",
+					Content = "Copied discord.gg/xbyte to clipboard!",
 					Delay = 3
 				})
 			end
