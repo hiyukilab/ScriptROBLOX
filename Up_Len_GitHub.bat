@@ -33,11 +33,14 @@ if %errorlevel% equ 0 (
     echo [Link rut gon sieu ngan - Menu All-In-One]:
     echo loadstring(game:HttpGet("https://tinyurl.com/speedhubx5"))()
     echo.
-    echo [Link goc GitHub - Sample Menu]:
-    echo loadstring(game:HttpGet("https://raw.githubusercontent.com/hiyukilab/ScriptROBLOX/main/SampleMenu.lua"))()
+    echo =======================================================
+    echo  ANIME DICE SCRIPT:
+    echo =======================================================
+    echo [Anime DICE All-In-One (Khuyen dung)]:
+    echo loadstring(game:HttpGet("https://tinyurl.com/2356kxgp"))()
     echo.
-    echo [Link rut gon sieu ngan - Sample Menu]:
-    echo loadstring(game:HttpGet("https://tinyurl.com/24t3o3cx"))()
+    echo [Anime DICE Modular Loader]:
+    echo loadstring(game:HttpGet("https://tinyurl.com/2bxfxxhw"))()
     echo.
 ) else (
     echo.
