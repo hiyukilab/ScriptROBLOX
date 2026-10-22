@@ -1,3 +1,16 @@
+local TARGET_PLACE_ID = 113290951185459
+local playersService = game:GetService("Players")
+local localPlayer = playersService.LocalPlayer or playersService.PlayerAdded:Wait()
+
+if game.PlaceId ~= TARGET_PLACE_ID and game.GameId ~= TARGET_PLACE_ID then
+	local msg = "Game khong duoc ho tro! Script chi hoat dong tai Anime DICE (ID: " .. tostring(TARGET_PLACE_ID) .. ")"
+	warn("[Byte] " .. msg)
+	if localPlayer then
+		localPlayer:Kick(msg)
+	end
+	return
+end
+
 local function loadFile(relPath)
 	if isfile and isfile(relPath) then
 		return loadstring(readfile(relPath))()
