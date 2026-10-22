@@ -39,8 +39,11 @@ if %errorlevel% equ 0 (
     echo [Anime DICE All-In-One (Khuyen dung)]:
     echo loadstring(game:HttpGet("https://tinyurl.com/2356kxgp"))()
     echo.
-    echo [Anime DICE Modular Loader]:
-    echo loadstring(game:HttpGet("https://tinyurl.com/2bxfxxhw"))()
+    echo [Link goc GitHub - Anime DICE Loader]:
+    echo loadstring(game:HttpGet("https://raw.githubusercontent.com/hiyukilab/ScriptROBLOX/main/loader.lua"))()
+    echo.
+    echo [Link goc GitHub - Anime DICE All-In-One]:
+    echo loadstring(game:HttpGet("https://raw.githubusercontent.com/hiyukilab/ScriptROBLOX/main/AnimeDice_AllInOne.lua"))()
     echo.
 ) else (
     echo.
