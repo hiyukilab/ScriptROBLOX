@@ -27,11 +27,17 @@ if %errorlevel% equ 0 (
     echo  [THÀNH CÔNG!] Code đã được cập nhật lên GitHub!
     echo =======================================================
     echo.
-    echo [Link goc GitHub]:
+    echo [Link goc GitHub - Menu All-In-One]:
     echo loadstring(game:HttpGet("https://raw.githubusercontent.com/hiyukilab/ScriptROBLOX/main/Menu_AllInOne.lua"))()
     echo.
-    echo [Link rut gon sieu ngan]:
+    echo [Link rut gon sieu ngan - Menu All-In-One]:
     echo loadstring(game:HttpGet("https://tinyurl.com/speedhubx5"))()
+    echo.
+    echo [Link goc GitHub - Sample Menu]:
+    echo loadstring(game:HttpGet("https://raw.githubusercontent.com/hiyukilab/ScriptROBLOX/main/SampleMenu.lua"))()
+    echo.
+    echo [Link rut gon sieu ngan - Sample Menu]:
+    echo loadstring(game:HttpGet("https://tinyurl.com/24t3o3cx"))()
     echo.
 ) else (
     echo.

@@ -5,19 +5,15 @@
     File UI gốc: Speed Hub X 5.0.0 Ui Source Code.txt
 --]]
 
--- 1. NẠP THƯ VIỆN UI (Chọn 1 trong các cách dưới đây tuỳ môi trường chạy của bạn)
+-- 1. NẠP THƯ VIỆN UI
 local Speed_Library
-
--- Cách 1: Nạp trực tiếp từ file trên executor (Delta, Codex, Fluxus, Wave, v.v.)
 if isfile and isfile("Speed Hub X 5.0.0 Ui Source Code.txt") then
     Speed_Library = loadstring(readfile("Speed Hub X 5.0.0 Ui Source Code.txt"))()
--- Cách 2: Nếu bạn dán toàn bộ code UI vào một ModuleScript trong Roblox Studio
--- local Speed_Library = require(game.ReplicatedStorage:WaitForChild("Speed_Library"))
 else
-    -- Nếu chạy file độc lập mà chưa load, bạn có thể dán toàn bộ code file Speed Hub X lên đầu file này
-    -- Hoặc thay bằng link loadstring raw github của bạn:
-    -- Speed_Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/.../source.lua"))()
-    warn("Vui long dam bao thu vien Speed_Library da duoc nap!")
+    local fetch = (request and function(url) return request({Url = url, Method = "GET"}).Body end)
+        or (httpget and function(url) return httpget(url) end)
+        or function(url) return game:HttpGet(url) end
+    Speed_Library = loadstring(fetch("https://raw.githubusercontent.com/hiyukilab/ScriptROBLOX/main/Speed%20Hub%20X%205.0.0%20Ui%20Source%20Code.txt"))()
 end
 
 if not Speed_Library then return end
@@ -228,7 +224,7 @@ SecInfo:AddButton({
     Icon = "rbxassetid://10709798574",
     Callback = function()
         if setclipboard then
-            setclipboard("https://discord.gg/your-invite")
+            setclipboard("https://discord.gg/xbyte")
             Speed_Library:SetNotification({
                 Title = "Clipboard",
                 Description = "Thành công",

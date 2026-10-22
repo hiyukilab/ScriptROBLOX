@@ -2465,7 +2465,7 @@ SecInfo:AddButton({
     Icon = "rbxassetid://10709798574",
     Callback = function()
         if setclipboard then
-            setclipboard("https://discord.gg/your-invite")
+            setclipboard("https://discord.gg/xbyte")
             Speed_Library:SetNotification({
                 Title = "Clipboard",
                 Description = "Thành công",
