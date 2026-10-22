@@ -10,7 +10,7 @@ local playersService = game:GetService("Players")
 local localPlayer = playersService.LocalPlayer or playersService.PlayerAdded:Wait()
 
 if game.PlaceId ~= TARGET_PLACE_ID and game.GameId ~= TARGET_PLACE_ID then
-	local msg = "Game khong duoc ho tro! Script chi hoat dong tai Anime DICE (ID: " .. tostring(TARGET_PLACE_ID) .. ")"
+	local msg = "Game is not supported! Script only runs on Anime DICE (ID: " .. tostring(TARGET_PLACE_ID) .. ")"
 	warn("[Byte] " .. msg)
 	if localPlayer then
 		localPlayer:Kick(msg)
@@ -1661,7 +1661,7 @@ function Speed_Library:CreateWindow(Config)
           Thickness = 2,
         }, SliderCircle)
 
-        -- Hitbox vÃ´ hÃ¬nh rá»™ng 32px chiá»u cao giÃºp báº¥m vÃ  trÆ°á»£t trÃªn Ä‘iá»‡n thoáº¡i / PC cá»±c nháº¡y
+        -- 32px height invisible hitbox for smooth slider interaction on mobile and PC
         local SliderHitbox = Custom:Create("TextButton", {
 					AnchorPoint = Vector2.new(1, 0.5),
 					BackgroundColor3 = Color3.fromRGB(0, 0, 0),

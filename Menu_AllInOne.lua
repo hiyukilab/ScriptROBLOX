@@ -1,8 +1,7 @@
---[[
+﻿--[[
     ====================================================================
-    SPEED HUB X 5.0.0 - BẢN GỘP TRỌN GÓI (ALL-IN-ONE STANDALONE)
-    Chỉ cần copy toàn bộ file này vào Executor (Delta, Codex, Wave...)
-    và bấm Execute là menu sẽ xuất hiện ngay!
+    SPEED HUB X 5.0.0 - ALL-IN-ONE STANDALONE
+    https://discord.gg/xbyte
     ====================================================================
 --]]
 
@@ -1649,7 +1648,7 @@ function Speed_Library:CreateWindow(Config)
           Thickness = 2,
         }, SliderCircle)
 
-        -- Hitbox vô hình rộng 32px chiều cao giúp bấm và trượt trên điện thoại / PC cực nhạy
+        -- 32px height invisible hitbox for smooth slider interaction on mobile and PC
         local SliderHitbox = Custom:Create("TextButton", {
 					AnchorPoint = Vector2.new(1, 0.5),
 					BackgroundColor3 = Color3.fromRGB(0, 0, 0),
@@ -2258,38 +2257,34 @@ end
 return Speed_Library
 end)()
 
-
--- 2. HIỂN THỊ THÔNG BÁO CHÀO MỪNG (Notification)
+-- 2. NOTIFICATION
 Speed_Library:SetNotification({
-    Title = "Speed Hub X",
+    Title = "Byte Hub",
     Description = "v5.0.0",
-    Content = "Menu đã được nạp thành công! Chúc bạn chơi game vui vẻ.",
-    Time = 0.5,  -- Thời gian chạy hiệu ứng trượt
-    Delay = 4    -- Tự đóng sau 4 giây
+    Content = "Menu loaded successfully! Enjoy playing.",
+    Time = 0.5,
+    Delay = 4
 })
 
--- 3. KHỞI TẠO CỬA SỔ CHÍNH (Window)
+-- 3. MAIN WINDOW
 local Window = Speed_Library:CreateWindow({
-    Title = "MY CUSTOM HUB",
+    Title = "BYTE HUB",
     Description = "v5.0.0",
-    ["Tab Width"] = 130,                     -- Độ rộng cột tab bên trái
-    SizeUi = UDim2.fromOffset(560, 340)       -- Kích thước khung menu
+    ["Tab Width"] = 130,
+    SizeUi = UDim2.fromOffset(560, 340)
 })
 
---------------------------------------------------------------------------------
--- TAB 1: NHÂN VẬT & DI CHUYỂN
---------------------------------------------------------------------------------
+-- TAB 1: PLAYER & MOVEMENT
 local TabPlayer = Window:CreateTab({
-    Name = "Nhân vật",
-    Icon = "rbxassetid://10723415766" -- Icon người chơi
+    Name = "Player",
+    Icon = "rbxassetid://10723415766"
 })
 
-local SecMovement = TabPlayer:AddSection("Chỉ số di chuyển", true) -- true: mặc định mở
+local SecMovement = TabPlayer:AddSection("Movement Stats", true)
 
--- Thanh trượt chỉnh WalkSpeed
 SecMovement:AddSlider({
-    Title = "Tốc độ chạy (WalkSpeed)",
-    Content = "Điều chỉnh tốc độ di chuyển của nhân vật",
+    Title = "WalkSpeed",
+    Content = "Adjust character movement speed",
     Increment = 1,
     Min = 16,
     Max = 250,
@@ -2302,10 +2297,9 @@ SecMovement:AddSlider({
     end
 })
 
--- Thanh trượt chỉnh JumpPower
 SecMovement:AddSlider({
-    Title = "Độ cao nhảy (JumpPower)",
-    Content = "Điều chỉnh lực nhảy của nhân vật",
+    Title = "JumpPower",
+    Content = "Adjust character jump height",
     Increment = 5,
     Min = 50,
     Max = 350,
@@ -2319,13 +2313,12 @@ SecMovement:AddSlider({
     end
 })
 
-local SecAbilities = TabPlayer:AddSection("Khả năng đặc biệt", false)
+local SecAbilities = TabPlayer:AddSection("Abilities", false)
 
--- Toggle Infinite Jump
 local InfiniteJumpEnabled = false
 SecAbilities:AddToggle({
-    Title = "Nhảy vô hạn (Infinite Jump)",
-    Content = "Cho phép nhảy liên tục trên không trung",
+    Title = "Infinite Jump",
+    Content = "Allow infinite jumps in mid-air",
     Default = false,
     Callback = function(state)
         InfiniteJumpEnabled = state
@@ -2341,10 +2334,9 @@ game:GetService("UserInputService").JumpRequest:Connect(function()
     end
 end)
 
--- Button Reset nhân vật
 SecAbilities:AddButton({
-    Title = "Hồi sinh (Reset Character)",
-    Content = "Tự động hạ gục nhân vật để hồi sinh tại điểm spawn",
+    Title = "Reset Character",
+    Content = "Instantly respawn at spawn location",
     Icon = "rbxassetid://10747373176",
     Callback = function()
         local char = game.Players.LocalPlayer.Character
@@ -2354,126 +2346,100 @@ SecAbilities:AddButton({
     end
 })
 
---------------------------------------------------------------------------------
--- TAB 2: TỰ ĐỘNG & FARM (AUTOMATION)
---------------------------------------------------------------------------------
+-- TAB 2: AUTOMATION & FARM
 local TabFarm = Window:CreateTab({
-    Name = "Tự động",
+    Name = "Automation",
     Icon = "rbxassetid://10734950309"
 })
 
-local SecAuto = TabFarm:AddSection("Cấu hình Auto Farm", true)
+local SecAuto = TabFarm:AddSection("Auto Farm Configuration", true)
 
--- Dropdown chọn mục tiêu quái
 local SelectedMob = "Slime"
 SecAuto:AddDropdown({
-    Title = "Chọn Quái Vật",
-    Content = "Chọn loại quái muốn tự động tấn công",
-    Multi = false, -- Chọn 1 loại duy nhất
+    Title = "Select Target Mob",
+    Content = "Choose monster type to attack",
+    Multi = false,
     Options = {"Slime", "Goblin", "Bandit", "Zombie", "Boss Dragon"},
     Default = {"Slime"},
     Callback = function(selectedList)
         SelectedMob = selectedList[1]
-        print("[AutoFarm] Đã chọn quái:", SelectedMob)
     end
 })
 
--- Dropdown đa chọn (Multi) vật phẩm cần nhặt
-local SelectedItems = {"Vàng", "Ngọc"}
+local SelectedItems = {"Gold", "Gems"}
 SecAuto:AddDropdown({
-    Title = "Nhặt vật phẩm tự động",
-    Content = "Có thể chọn nhiều loại vật phẩm cùng lúc",
-    Multi = true, -- Chọn nhiều mục
-    Options = {"Vàng", "Ngọc", "Trang bị", "Bình máu", "Bình mana"},
-    Default = {"Vàng", "Ngọc"},
+    Title = "Auto Collect Items",
+    Content = "Choose items to collect automatically",
+    Multi = true,
+    Options = {"Gold", "Gems", "Equipment", "Health Potion", "Mana Potion"},
+    Default = {"Gold", "Gems"},
     Callback = function(selectedList)
         SelectedItems = selectedList
-        print("[AutoFarm] Danh sách nhặt:", table.concat(selectedList, ", "))
     end
 })
 
--- Toggle bật tắt Auto Farm
 local AutoFarmRunning = false
 SecAuto:AddToggle({
-    Title = "Kích hoạt Auto Farm",
-    Content = "Bắt đầu tự động tìm và đánh quái đã chọn",
+    Title = "Enable Auto Farm",
+    Content = "Start hunting selected monsters automatically",
     Default = false,
     Callback = function(state)
         AutoFarmRunning = state
         if state then
             Speed_Library:SetNotification({
                 Title = "Auto Farm",
-                Description = "Đang chạy",
-                Content = "Bắt đầu farm quái: " .. tostring(SelectedMob),
+                Description = "Running",
+                Content = "Started farming: " .. tostring(SelectedMob),
                 Delay = 3
             })
         else
             Speed_Library:SetNotification({
                 Title = "Auto Farm",
-                Description = "Đã dừng",
-                Content = "Đã dừng chế độ tự động farm.",
+                Description = "Stopped",
+                Content = "Auto farm stopped.",
                 Delay = 3
             })
         end
     end
 })
 
--- Loop giả lập Auto Farm
-task.spawn(function()
-    while true do
-        task.wait(1)
-        if AutoFarmRunning then
-            -- Logic farm quái của bạn đặt tại đây:
-            -- print("Đang đánh: " .. tostring(SelectedMob))
-        end
-    end
-end)
-
---------------------------------------------------------------------------------
--- TAB 3: TIỆN ÍCH & CÀI ĐẶT
---------------------------------------------------------------------------------
+-- TAB 3: SETTINGS
 local TabMisc = Window:CreateTab({
-    Name = "Cài đặt",
+    Name = "Settings",
     Icon = "rbxassetid://10734950020"
 })
 
-local SecInfo = TabMisc:AddSection("Thông tin & Tiện ích", true)
+local SecInfo = TabMisc:AddSection("Information & Community", true)
 
--- Hiển thị thông tin phiên bản
 SecInfo:AddParagraph({
-    Title = "Giới thiệu Script",
-    Content = "Menu được xây dựng trên nền tảng Speed Hub X UI v5.0.0. Hỗ trợ mượt mà trên cả PC và Mobile."
+    Title = "About Script",
+    Content = "Built on Speed Hub X UI v5.0.0. Optimized for mobile and PC."
 })
 
--- Thêm đường gạch phân cách
 SecInfo:AddLine()
 
--- Ô nhập liệu Input: Webhook hoặc Key
 SecInfo:AddInput({
-    Title = "Mã kích hoạt / Key",
-    Content = "Nhập key bản quyền nếu có",
+    Title = "Activation Key",
+    Content = "Enter license key if required",
     Default = "",
     Callback = function(text)
-        print("Người dùng đã nhập key:", text)
+        print("User entered key:", text)
     end
 })
 
--- Nút sao chép link Discord
 SecInfo:AddButton({
-    Title = "Sao chép link Discord",
-    Content = "Copy link cộng đồng vào clipboard của bạn",
+    Title = "Copy Discord Link",
+    Content = "Copy community invite link: discord.gg/xbyte",
     Icon = "rbxassetid://10709798574",
     Callback = function()
         if setclipboard then
             setclipboard("https://discord.gg/xbyte")
             Speed_Library:SetNotification({
                 Title = "Clipboard",
-                Description = "Thành công",
-                Content = "Đã sao chép link Discord vào bộ nhớ tạm!",
+                Description = "Success",
+                Content = "Copied Discord link to clipboard!",
                 Delay = 3
             })
-        else
-            print("Executor không hỗ trợ setclipboard")
         end
     end
 })

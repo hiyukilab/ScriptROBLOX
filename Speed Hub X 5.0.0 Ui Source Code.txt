@@ -1640,7 +1640,7 @@ function Speed_Library:CreateWindow(Config)
           Thickness = 2,
         }, SliderCircle)
 
-        -- Hitbox vô hình rộng 32px chiều cao giúp bấm và trượt trên điện thoại / PC cực nhạy
+        -- 32px height invisible hitbox for smooth slider interaction on mobile and PC
         local SliderHitbox = Custom:Create("TextButton", {
 					AnchorPoint = Vector2.new(1, 0.5),
 					BackgroundColor3 = Color3.fromRGB(0, 0, 0),
